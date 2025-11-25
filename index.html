@@ -2,8 +2,9 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Stats App – v0.1</title>
+  <title>Stats App – v1.0</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
   <style>
     :root {
       --bg: #050816;
@@ -152,6 +153,7 @@
       width: 40%;
       background: linear-gradient(to right, var(--accent-soft), var(--accent));
       border-radius: 999px;
+      transition: width 0.25s ease;
     }
 
     /* CONTENT GENERAL */
@@ -164,14 +166,6 @@
       font-size: 18px;
       font-weight: 700;
       margin-bottom: 14px;
-    }
-
-    .section-subtitle {
-      font-size: 13px;
-      text-transform: uppercase;
-      letter-spacing: 0.18em;
-      color: var(--text-muted);
-      margin-bottom: 8px;
     }
 
     /* STATS CARD */
@@ -200,6 +194,10 @@
 
     .stats-table td:nth-child(2) {
       width: 100%;
+    }
+
+    .stats-table td:last-child {
+      width: 48px; /* fixed area for value */
     }
 
     .stat-label {
@@ -237,6 +235,8 @@
       text-align: right;
       color: #e5e7eb;
       font-weight: 500;
+      white-space: nowrap;
+      overflow: hidden;
     }
 
     /* BOTTOM NAV */
@@ -312,6 +312,15 @@
       justify-content: space-between;
       align-items: center;
       margin-bottom: 8px;
+      cursor: pointer;
+      transition: transform 0.1s ease, box-shadow 0.1s ease,
+        background 0.1s ease;
+    }
+
+    .mission-card:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.45);
+      background: #101827;
     }
 
     .mission-main {
@@ -401,7 +410,7 @@
         <div class="avatar">L</div>
         <div class="level-block">
           <div class="level-label">Current Level</div>
-          <div class="level-number">5</div>
+          <div class="level-number" id="level-value">5</div>
         </div>
       </div>
       <div class="header-pill">
@@ -413,11 +422,11 @@
     <div class="xp-bar-container">
       <div class="xp-label-row">
         <span>XP to next level</span>
-        <span>40 / 100</span>
+        <span id="xp-text">40 / 100</span>
       </div>
       <div class="xp-bar">
         <div class="xp-bar-track">
-          <div class="xp-bar-fill"></div>
+          <div class="xp-bar-fill" id="xp-bar-fill"></div>
         </div>
       </div>
     </div>
@@ -439,10 +448,10 @@
                 </td>
                 <td>
                   <div class="stat-bar">
-                    <div class="stat-bar-fill" style="width: 75%; background: var(--str);"></div>
+                    <div class="stat-bar-fill" data-stat-bar="STR"></div>
                   </div>
                 </td>
-                <td class="stat-value">12</td>
+                <td class="stat-value" data-stat-value="STR"></td>
               </tr>
 
               <tr>
@@ -454,10 +463,10 @@
                 </td>
                 <td>
                   <div class="stat-bar">
-                    <div class="stat-bar-fill" style="width: 60%; background: var(--int);"></div>
+                    <div class="stat-bar-fill" data-stat-bar="INT"></div>
                   </div>
                 </td>
-                <td class="stat-value">10</td>
+                <td class="stat-value" data-stat-value="INT"></td>
               </tr>
 
               <tr>
@@ -469,10 +478,10 @@
                 </td>
                 <td>
                   <div class="stat-bar">
-                    <div class="stat-bar-fill" style="width: 45%; background: var(--cha);"></div>
+                    <div class="stat-bar-fill" data-stat-bar="CHA"></div>
                   </div>
                 </td>
-                <td class="stat-value">7</td>
+                <td class="stat-value" data-stat-value="CHA"></td>
               </tr>
 
               <tr>
@@ -484,10 +493,10 @@
                 </td>
                 <td>
                   <div class="stat-bar">
-                    <div class="stat-bar-fill" style="width: 55%; background: var(--hlt);"></div>
+                    <div class="stat-bar-fill" data-stat-bar="HLT"></div>
                   </div>
                 </td>
-                <td class="stat-value">9</td>
+                <td class="stat-value" data-stat-value="HLT"></td>
               </tr>
 
               <tr>
@@ -499,10 +508,10 @@
                 </td>
                 <td>
                   <div class="stat-bar">
-                    <div class="stat-bar-fill" style="width: 40%; background: var(--wlt);"></div>
+                    <div class="stat-bar-fill" data-stat-bar="WLT"></div>
                   </div>
                 </td>
-                <td class="stat-value">6</td>
+                <td class="stat-value" data-stat-value="WLT"></td>
               </tr>
 
               <tr>
@@ -514,10 +523,10 @@
                 </td>
                 <td>
                   <div class="stat-bar">
-                    <div class="stat-bar-fill" style="width: 30%; background: var(--dis);"></div>
+                    <div class="stat-bar-fill" data-stat-bar="DIS"></div>
                   </div>
                 </td>
-                <td class="stat-value">4</td>
+                <td class="stat-value" data-stat-value="DIS"></td>
               </tr>
             </tbody>
           </table>
@@ -539,21 +548,21 @@
         <div class="missions-heading">Missions (v0.1 preview)</div>
 
         <div class="missions-subheading">Easy</div>
-        <div class="mission-card">
-          <div class="mission-main">Walk 3000–6000 steps</div>
+        <div class="mission-card" data-xp="8" data-stat="STR">
+          <div class="mission-main">Walk 3000–5000 steps</div>
           <div class="mission-meta">
             <span class="mission-xp">+8 XP</span> ·
             <span class="mission-stat str">STR</span>
           </div>
         </div>
-        <div class="mission-card">
-          <div class="mission-main">Study 25–35 minutes</div>
+        <div class="mission-card" data-xp="8" data-stat="INT">
+          <div class="mission-main">Study 25–30 minutes</div>
           <div class="mission-meta">
             <span class="mission-xp">+8 XP</span> ·
             <span class="mission-stat int">INT</span>
           </div>
         </div>
-        <div class="mission-card">
+        <div class="mission-card" data-xp="6" data-stat="CHA">
           <div class="mission-main">Greet 3 people</div>
           <div class="mission-meta">
             <span class="mission-xp">+6 XP</span> ·
@@ -562,21 +571,21 @@
         </div>
 
         <div class="missions-subheading">Medium</div>
-        <div class="mission-card">
+        <div class="mission-card" data-xp="15" data-stat="STR">
           <div class="mission-main">Workout / sport 30 minutes</div>
           <div class="mission-meta">
             <span class="mission-xp">+15 XP</span> ·
             <span class="mission-stat str">STR</span>
           </div>
         </div>
-        <div class="mission-card">
+        <div class="mission-card" data-xp="15" data-stat="INT">
           <div class="mission-main">Solve 3 problems</div>
           <div class="mission-meta">
             <span class="mission-xp">+15 XP</span> ·
             <span class="mission-stat int">INT</span>
           </div>
         </div>
-        <div class="mission-card">
+        <div class="mission-card" data-xp="10" data-stat="DIS">
           <div class="mission-main">No social media for 1 hour</div>
           <div class="mission-meta">
             <span class="mission-xp">+10 XP</span> ·
@@ -597,11 +606,94 @@
   </div>
 
   <script>
+    // ---------- CONSTANTS ----------
+    const MAX_STAT = 100;
+
+    // ---------- GAME STATE ----------
+    const state = {
+      level: 5,
+      xp: 40,
+      xpToNext: 100,
+      stats: {
+        STR: 12,
+        INT: 10,
+        CHA: 7,
+        HLT: 9,
+        WLT: 6,
+        DIS: 4
+      }
+    };
+
+    // ---------- DOM ELEMENTS ----------
+    const levelValueEl = document.getElementById("level-value");
+    const xpTextEl = document.getElementById("xp-text");
+    const xpBarFillEl = document.getElementById("xp-bar-fill");
+
+    const statBars = {};
+    const statValues = {};
+    ["STR","INT","CHA","HLT","WLT","DIS"].forEach(code => {
+      statBars[code] = document.querySelector(`[data-stat-bar="${code}"]`);
+      statValues[code] = document.querySelector(`[data-stat-value="${code}"]`);
+    });
+
     const navButtons = document.querySelectorAll(".nav-btn");
     const statsScreen = document.getElementById("stats-screen");
     const missionsScreen = document.getElementById("missions-screen");
     const backLink = document.getElementById("back-link");
+    const missionCards = document.querySelectorAll(".mission-card");
 
+    // ---------- UPDATE FUNCTIONS ----------
+    function updateXPUI() {
+      levelValueEl.textContent = state.level;
+      xpTextEl.textContent = `${state.xp} / ${state.xpToNext}`;
+
+      const ratio = Math.max(0, Math.min(1, state.xp / state.xpToNext));
+      xpBarFillEl.style.width = `${ratio * 100}%`;
+    }
+
+    function updateStatsUI() {
+      Object.keys(state.stats).forEach(code => {
+        const rawValue = state.stats[code];
+        const clamped = Math.min(MAX_STAT, Math.max(0, rawValue));
+
+        // show real value, but you can use clamped if you truly never want >100 displayed
+        statValues[code].textContent = clamped;
+
+        const percent = Math.max(5, Math.min(100, (clamped / MAX_STAT) * 100));
+        const bar = statBars[code];
+        bar.style.width = `${percent}%`;
+        bar.style.background =
+          code === "STR" ? "var(--str)" :
+          code === "INT" ? "var(--int)" :
+          code === "CHA" ? "var(--cha)" :
+          code === "HLT" ? "var(--hlt)" :
+          code === "WLT" ? "var(--wlt)" :
+          "var(--dis)";
+      });
+    }
+
+    function addXP(amount) {
+      state.xp += amount;
+      while (state.xp >= state.xpToNext) {
+        state.xp -= state.xpToNext;
+        state.level += 1;
+        state.xpToNext = 100 * state.level; // simple formula
+      }
+      updateXPUI();
+    }
+
+    function completeMission(xpGain, statCode) {
+      addXP(xpGain);
+      if (state.stats[statCode] != null) {
+        state.stats[statCode] = Math.min(
+          MAX_STAT,
+          state.stats[statCode] + 1
+        ); // cap at 100
+        updateStatsUI();
+      }
+    }
+
+    // ---------- NAVIGATION ----------
     function showScreen(name) {
       if (name === "stats") {
         statsScreen.classList.add("active");
@@ -615,9 +707,9 @@
     navButtons.forEach(btn => {
       btn.addEventListener("click", () => {
         const screen = btn.dataset.screen;
-        if (!screen) return;
+        if (!screen || btn.disabled) return;
         navButtons.forEach(b => b.classList.remove("active"));
-        if (!btn.disabled) btn.classList.add("active");
+        btn.classList.add("active");
         showScreen(screen);
       });
     });
@@ -627,6 +719,19 @@
       navButtons.forEach(b => b.classList.remove("active"));
       document.querySelector('[data-screen="stats"]').classList.add("active");
     });
+
+    // ---------- MISSION CLICK HANDLERS ----------
+    missionCards.forEach(card => {
+      card.addEventListener("click", () => {
+        const xp = Number(card.dataset.xp || "0");
+        const stat = card.dataset.stat;
+        completeMission(xp, stat);
+      });
+    });
+
+    // ---------- INITIAL RENDER ----------
+    updateXPUI();
+    updateStatsUI();
   </script>
 
 </body>
