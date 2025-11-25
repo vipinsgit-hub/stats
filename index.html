@@ -2,14 +2,13 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>RPG Life Stats – v0.1</title>
+  <title>Stats App – v0.1</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
   <style>
     :root {
       --bg: #050816;
       --card: #111827;
-      --card-soft: #0f172a;
+      --card-soft: #1f2937;
       --accent: #22c55e;
       --accent-soft: #16a34a;
       --text-main: #f9fafb;
@@ -20,15 +19,16 @@
       --int: #3b82f6;
       --cha: #facc15;
       --hlt: #22c55e;
-      --wlt: #eab308;
-      --dis: #8b5cf6;
+      --wlt: #f59e0b;
+      --dis: #a855f7;
     }
 
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      font-family: system-ui, sans-serif;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+        sans-serif;
     }
 
     body {
@@ -38,352 +38,595 @@
       display: flex;
       justify-content: center;
       align-items: flex-start;
-      padding: 20px;
+      padding: 24px 12px;
     }
 
     .app {
       width: 100%;
-      max-width: 420px;
-      background: rgba(15, 23, 42, 0.95);
-      border-radius: 20px;
+      max-width: 520px;
+      background: rgba(15, 23, 42, 0.96);
+      border-radius: 26px;
       border: 1px solid rgba(148, 163, 184, 0.15);
-      box-shadow: 0 20px 40px rgba(0,0,0,0.7);
+      box-shadow: 0 24px 45px rgba(0, 0, 0, 0.7);
       overflow: hidden;
     }
 
     /* HEADER */
+
     .app-header {
-      padding: 16px 18px 10px;
+      padding: 18px 22px 10px;
       display: flex;
-      justify-content: space-between;
       align-items: center;
+      justify-content: space-between;
       border-bottom: 1px solid var(--border-soft);
-      background: linear-gradient(to bottom right, #020617, #0b1120);
+      background: linear-gradient(to bottom right, #020617, #020617, #0b1120);
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 14px;
     }
 
     .avatar {
-      width: 36px;
-      height: 36px;
+      width: 52px;
+      height: 52px;
       border-radius: 999px;
-      background: radial-gradient(circle at 30% 30%, #22c55e,#16a34a,#14532d);
+      background: radial-gradient(circle at 30% 30%, #22c55e, #16a34a);
       display: flex;
-      justify-content: center;
       align-items: center;
-      font-size: 18px;
-      font-weight: bold;
-      border: 2px solid rgba(240,253,250,0.6);
+      justify-content: center;
+      font-size: 24px;
+      font-weight: 700;
+      border: 3px solid rgba(240, 253, 244, 0.9);
     }
 
+    .level-block {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .level-label {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .level-number {
+      font-size: 22px;
+      font-weight: 700;
+    }
+
+    .header-pill {
+      font-size: 12px;
+      padding: 8px 16px;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.92);
+      border: 1px solid rgba(148, 163, 184, 0.45);
+      color: var(--text-main);
+    }
+
+    .header-pill span {
+      color: var(--text-muted);
+    }
+
+    /* XP BAR */
+
     .xp-bar-container {
-      padding: 0 18px 12px;
+      padding: 6px 22px 14px;
       border-bottom: 1px solid var(--border-soft);
     }
 
     .xp-label-row {
       display: flex;
       justify-content: space-between;
-      font-size: 11px;
-      color: var(--text-muted);
-      margin-bottom: 4px;
+      font-size: 12px;
+      color: var(--text-main);
+      margin-bottom: 6px;
+    }
+
+    .xp-label-row span:last-child {
+      color: var(--text-main);
+      font-weight: 500;
     }
 
     .xp-bar {
       width: 100%;
       height: 10px;
-      background: #020617;
       border-radius: 999px;
+      background: #020617;
       border: 1px solid #1f2937;
       overflow: hidden;
     }
 
-    .xp-bar-fill {
-      width: 40%;
+    .xp-bar-track {
+      width: 100%;
       height: 100%;
+      background: #111827;
+      position: relative;
+    }
+
+    .xp-bar-fill {
+      position: absolute;
+      inset: 0;
+      width: 40%;
       background: linear-gradient(to right, var(--accent-soft), var(--accent));
+      border-radius: 999px;
     }
 
-    /* CONTENT */
+    /* CONTENT GENERAL */
+
     .content {
-      padding: 14px 18px 6px;
+      padding: 18px 22px 16px;
     }
 
-    .section-title {
+    .section-heading {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 14px;
+    }
+
+    .section-subtitle {
       font-size: 13px;
       text-transform: uppercase;
+      letter-spacing: 0.18em;
       color: var(--text-muted);
-      letter-spacing: 0.16em;
       margin-bottom: 8px;
     }
 
-    .card {
+    /* STATS CARD */
+
+    .stats-card {
       background: var(--card);
-      padding: 10px;
-      border-radius: 14px;
-      border: 1px solid rgba(148,163,184,0.18);
+      border-radius: 18px;
+      border: 1px solid rgba(148, 163, 184, 0.22);
+      padding: 12px 14px 10px;
     }
 
-    /* STAT TABLE */
+    .stats-table {
+      width: 100%;
+      table-layout: fixed;
+    }
+
+    .stats-table td {
+      padding: 8px 4px;
+      vertical-align: middle;
+      font-size: 13px;
+    }
+
+    .stats-table td:nth-child(1) {
+      width: 22%;
+    }
+
+    .stats-table td:nth-child(2) {
+      width: 100%;
+    }
+
     .stat-label {
       display: flex;
       align-items: center;
       gap: 8px;
-      font-size: 13px;
     }
 
     .stat-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
+      width: 10px;
+      height: 10px;
+      border-radius: 999px;
     }
 
-.stats-table {
-  width: 70%;
-  table-layout: fixed; /* Allow bar to expand fully */
-}
+    .stat-name {
+      font-weight: 500;
+    }
 
-.stats-table td:nth-child(2) {
-  width: 70%; /* Bar column takes all available space */
-}
+    .stat-bar {
+      width: 100%;
+      height: 7px;
+      background: #050814;
+      border-radius: 999px;
+      overflow: hidden;
+    }
 
-.stat-bar {
-  width: 70%;
-  height: 6px;
-  background: #0a0f1a;
-  border-radius: 6px;
-  overflow: hidden;
-}
-
-.stat-bar-fill {
-  height: 70%;
-  border-radius: 6px;
-  transition: 0.3s ease;
-}
-
+    .stat-bar-fill {
+      height: 100%;
+      border-radius: inherit;
+      transition: width 0.3s ease;
+    }
 
     .stat-value {
-      font-size: 11px;
-      color: var(--text-muted);
+      font-size: 13px;
       text-align: right;
+      color: #e5e7eb;
+      font-weight: 500;
     }
 
-    /* NAV BUTTONS */
+    /* BOTTOM NAV */
+
     .bottom-nav {
-      margin-top: 12px;
+      margin-top: 18px;
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-      gap: 6px;
+      gap: 8px;
     }
 
     .nav-btn {
-      font-size: 11px;
-      padding: 8px 4px;
+      font-size: 13px;
+      padding: 9px 4px;
       border-radius: 999px;
       border: 1px solid #1f2937;
       background: #020617;
       color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.15s ease;
     }
 
     .nav-btn.active {
       background: var(--accent);
+      border-color: var(--accent-soft);
       color: #022c22;
-      font-weight: bold;
+      font-weight: 600;
     }
 
-    /* MISSIONS SCREEN */
+    .nav-btn[disabled] {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    /* SCREENS */
+
     .screen {
       display: none;
-      padding: 14px 18px;
     }
 
     .screen.active {
       display: block;
     }
 
-    .mission-group-title {
-      font-size: 12px;
+    /* MISSIONS */
+
+    .missions-container {
+      padding: 18px 22px 20px;
+    }
+
+    .missions-heading {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+
+    .missions-subheading {
+      font-size: 13px;
       text-transform: uppercase;
+      letter-spacing: 0.16em;
       color: var(--text-muted);
-      margin-bottom: 4px;
+      margin-top: 12px;
+      margin-bottom: 6px;
     }
 
-    .pill {
-      display: inline-flex;
+    .mission-card {
+      background: #111827;
+      border-radius: 16px;
+      padding: 10px 14px;
+      border: 1px solid #1f2937;
+      font-size: 13px;
+      display: flex;
+      justify-content: space-between;
       align-items: center;
-      gap: 6px;
-      font-size: 11px;
-      padding: 6px 8px;
-      border-radius: 999px;
-      background: var(--card);
-      border: 1px solid #1f2937;
-      margin: 3px 4px 4px 0;
+      margin-bottom: 8px;
     }
 
-    .tag-easy { color: #4ade80; }
-    .tag-medium { color: #38bdf8; }
-    .tag-hard { color: #fb7185; }
-
-    .lock-pill {
-      opacity: 0.6;
-      border-style: dashed;
-    }
-
-    /* BACK BUTTON */
-    .back-btn {
-      margin-top: 10px;
-      width: 100%;
-      padding: 8px 10px;
-      border-radius: 999px;
-      background: #020617;
-      border: 1px solid #1f2937;
+    .mission-main {
       color: #e5e7eb;
-      font-size: 12px;
     }
 
+    .mission-meta {
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    .mission-xp {
+      color: #4ade80;
+      font-weight: 500;
+    }
+
+    .mission-stat {
+      font-weight: 600;
+    }
+
+    .mission-stat.str { color: var(--str); }
+    .mission-stat.int { color: var(--int); }
+    .mission-stat.cha { color: var(--cha); }
+    .mission-stat.hlt { color: var(--hlt); }
+    .mission-stat.wlt { color: var(--wlt); }
+    .mission-stat.dis { color: var(--dis); }
+
+    /* HARD LOCKED */
+
+    .hard-locked {
+      background: #020617;
+      border-radius: 16px;
+      padding: 10px 14px;
+      border: 1px dashed #4b5563;
+      font-size: 13px;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 4px;
+    }
+
+    .hard-locked span.lock-icon {
+      color: #fbbf24;
+      font-size: 16px;
+    }
+
+    /* BACK LINK */
+
+    .back-link {
+      margin-top: 14px;
+      text-align: center;
+      font-size: 13px;
+      color: #4ade80;
+      cursor: pointer;
+      padding-bottom: 4px;
+    }
+
+    .back-link:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 520px) {
+      .app {
+        border-radius: 20px;
+      }
+
+      .app-header {
+        padding-inline: 16px;
+      }
+
+      .xp-bar-container,
+      .content,
+      .missions-container {
+        padding-inline: 16px;
+      }
+    }
   </style>
 </head>
-
 <body>
 
   <div class="app">
 
     <!-- HEADER -->
     <header class="app-header">
-      <div class="avatar">L</div>
-      <div>
-        <div style="font-size:12px; color:var(--text-muted)">Current Level</div>
-        <div style="font-size:16px; font-weight:700;">Level 5</div>
+      <div class="header-left">
+        <div class="avatar">L</div>
+        <div class="level-block">
+          <div class="level-label">Current Level</div>
+          <div class="level-number">5</div>
+        </div>
       </div>
-      <div class="header-pill">AI Missions · coming soon</div>
+      <div class="header-pill">
+        <strong>AI Missions</strong> <span>· coming soon</span>
+      </div>
     </header>
 
-    <!-- XP -->
+    <!-- XP BAR -->
     <div class="xp-bar-container">
       <div class="xp-label-row">
         <span>XP to next level</span>
         <span>40 / 100</span>
       </div>
       <div class="xp-bar">
-        <div class="xp-bar-fill"></div>
+        <div class="xp-bar-track">
+          <div class="xp-bar-fill"></div>
+        </div>
       </div>
     </div>
 
-    <!-- HOME -->
-    <main id="home-screen" class="content">
-      <div class="section-title">Stats overview</div>
+    <!-- STATS SCREEN -->
+    <section id="stats-screen" class="screen active">
+      <div class="content">
+        <div class="section-heading">Stats Overview</div>
 
-      <div class="card">
-        <table class="stats-table">
-          <tr>
-            <td><div class="stat-label"><div class="stat-dot" style="background:var(--str)"></div>STR</div></td>
-            <td><div class="stat-bar"><div class="stat-bar-fill" style="width:60%; background:var(--str)"></div></div></td>
-            <td class="stat-value">12</td>
-          </tr>
+        <div class="stats-card">
+          <table class="stats-table">
+            <tbody>
+              <tr>
+                <td>
+                  <div class="stat-label">
+                    <span class="stat-dot" style="background: var(--str);"></span>
+                    <span class="stat-name">STR</span>
+                  </div>
+                </td>
+                <td>
+                  <div class="stat-bar">
+                    <div class="stat-bar-fill" style="width: 75%; background: var(--str);"></div>
+                  </div>
+                </td>
+                <td class="stat-value">12</td>
+              </tr>
 
-          <tr>
-            <td><div class="stat-label"><div class="stat-dot" style="background:var(--int)"></div>INT</div></td>
-            <td><div class="stat-bar"><div class="stat-bar-fill" style="width:50%; background:var(--int)"></div></div></td>
-            <td class="stat-value">10</td>
-          </tr>
+              <tr>
+                <td>
+                  <div class="stat-label">
+                    <span class="stat-dot" style="background: var(--int);"></span>
+                    <span class="stat-name">INT</span>
+                  </div>
+                </td>
+                <td>
+                  <div class="stat-bar">
+                    <div class="stat-bar-fill" style="width: 60%; background: var(--int);"></div>
+                  </div>
+                </td>
+                <td class="stat-value">10</td>
+              </tr>
 
-          <tr>
-            <td><div class="stat-label"><div class="stat-dot" style="background:var(--cha)"></div>CHA</div></td>
-            <td><div class="stat-bar"><div class="stat-bar-fill" style="width:35%; background:var(--cha)"></div></div></td>
-            <td class="stat-value">7</td>
-          </tr>
+              <tr>
+                <td>
+                  <div class="stat-label">
+                    <span class="stat-dot" style="background: var(--cha);"></span>
+                    <span class="stat-name">CHA</span>
+                  </div>
+                </td>
+                <td>
+                  <div class="stat-bar">
+                    <div class="stat-bar-fill" style="width: 45%; background: var(--cha);"></div>
+                  </div>
+                </td>
+                <td class="stat-value">7</td>
+              </tr>
 
-          <tr>
-            <td><div class="stat-label"><div class="stat-dot" style="background:var(--hlt)"></div>HLT</div></td>
-            <td><div class="stat-bar"><div class="stat-bar-fill" style="width:45%; background:var(--hlt)"></div></div></td>
-            <td class="stat-value">9</td>
-          </tr>
+              <tr>
+                <td>
+                  <div class="stat-label">
+                    <span class="stat-dot" style="background: var(--hlt);"></span>
+                    <span class="stat-name">HLT</span>
+                  </div>
+                </td>
+                <td>
+                  <div class="stat-bar">
+                    <div class="stat-bar-fill" style="width: 55%; background: var(--hlt);"></div>
+                  </div>
+                </td>
+                <td class="stat-value">9</td>
+              </tr>
 
-          <tr>
-            <td><div class="stat-label"><div class="stat-dot" style="background:var(--wlt)"></div>WLT</div></td>
-            <td><div class="stat-bar"><div class="stat-bar-fill" style="width:30%; background:var(--wlt)"></div></div></td>
-            <td class="stat-value">6</td>
-          </tr>
+              <tr>
+                <td>
+                  <div class="stat-label">
+                    <span class="stat-dot" style="background: var(--wlt);"></span>
+                    <span class="stat-name">WLT</span>
+                  </div>
+                </td>
+                <td>
+                  <div class="stat-bar">
+                    <div class="stat-bar-fill" style="width: 40%; background: var(--wlt);"></div>
+                  </div>
+                </td>
+                <td class="stat-value">6</td>
+              </tr>
 
-          <tr>
-            <td><div class="stat-label"><div class="stat-dot" style="background:var(--dis)"></div>DIS</div></td>
-            <td><div class="stat-bar"><div class="stat-bar-fill" style="width:20%; background:var(--dis)"></div></div></td>
-            <td class="stat-value">4</td>
-          </tr>
-        </table>
+              <tr>
+                <td>
+                  <div class="stat-label">
+                    <span class="stat-dot" style="background: var(--dis);"></span>
+                    <span class="stat-name">DIS</span>
+                  </div>
+                </td>
+                <td>
+                  <div class="stat-bar">
+                    <div class="stat-bar-fill" style="width: 30%; background: var(--dis);"></div>
+                  </div>
+                </td>
+                <td class="stat-value">4</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- NAV -->
+        <div class="bottom-nav">
+          <button class="nav-btn active" data-screen="stats">Stats</button>
+          <button class="nav-btn" data-screen="missions">Missions</button>
+          <button class="nav-btn" disabled>Achievements</button>
+          <button class="nav-btn" disabled>Ranking</button>
+        </div>
       </div>
+    </section>
 
-      <div class="bottom-nav">
-        <button class="nav-btn active" data-screen="home">Stats</button>
-        <button class="nav-btn" data-screen="missions">Missions</button>
-        <button class="nav-btn" disabled>Achievements</button>
-        <button class="nav-btn" disabled>Ranking</button>
-      </div>
-    </main>
-
-    <!-- MISSIONS -->
+    <!-- MISSIONS SCREEN -->
     <section id="missions-screen" class="screen">
-      <div class="section-title">Missions (v0.1 preview)</div>
+      <div class="missions-container">
+        <div class="missions-heading">Missions (v0.1 preview)</div>
 
-      <div class="mission-group">
-        <div class="mission-group-title">Easy</div>
-        <div class="pill">Walk 3000–5000 steps <span class="tag-easy">+8 XP · STR</span></div>
-        <div class="pill">Study 25–30 minutes <span class="tag-easy">+8 XP · INT</span></div>
-        <div class="pill">Greet 3 people <span class="tag-easy">+6 XP · CHA</span></div>
+        <div class="missions-subheading">Easy</div>
+        <div class="mission-card">
+          <div class="mission-main">Walk 3000–5000 steps</div>
+          <div class="mission-meta">
+            <span class="mission-xp">+8 XP</span> ·
+            <span class="mission-stat str">STR</span>
+          </div>
+        </div>
+        <div class="mission-card">
+          <div class="mission-main">Study 25–30 minutes</div>
+          <div class="mission-meta">
+            <span class="mission-xp">+8 XP</span> ·
+            <span class="mission-stat int">INT</span>
+          </div>
+        </div>
+        <div class="mission-card">
+          <div class="mission-main">Greet 3 people</div>
+          <div class="mission-meta">
+            <span class="mission-xp">+6 XP</span> ·
+            <span class="mission-stat cha">CHA</span>
+          </div>
+        </div>
+
+        <div class="missions-subheading">Medium</div>
+        <div class="mission-card">
+          <div class="mission-main">Workout / sport 30 minutes</div>
+          <div class="mission-meta">
+            <span class="mission-xp">+15 XP</span> ·
+            <span class="mission-stat str">STR</span>
+          </div>
+        </div>
+        <div class="mission-card">
+          <div class="mission-main">Solve 3 problems</div>
+          <div class="mission-meta">
+            <span class="mission-xp">+15 XP</span> ·
+            <span class="mission-stat int">INT</span>
+          </div>
+        </div>
+        <div class="mission-card">
+          <div class="mission-main">No social media for 1 hour</div>
+          <div class="mission-meta">
+            <span class="mission-xp">+10 XP</span> ·
+            <span class="mission-stat dis">DIS</span>
+          </div>
+        </div>
+
+        <div class="missions-subheading">Hard (locked)</div>
+        <div class="hard-locked">
+          <span class="lock-icon">🔒</span>
+          <span>Unlock after 100-day streak · Hard missions · High XP</span>
+        </div>
+
+        <div id="back-link" class="back-link">← Back to stats</div>
       </div>
-
-      <div class="mission-group">
-        <div class="mission-group-title">Medium</div>
-        <div class="pill">Workout 30 mins <span class="tag-medium">+15 XP · STR</span></div>
-        <div class="pill">Solve 3 problems <span class="tag-medium">+15 XP · INT</span></div>
-        <div class="pill">No social media 1hr <span class="tag-medium">+10 XP · DIS</span></div>
-      </div>
-
-      <div class="mission-group">
-        <div class="mission-group-title">Hard (Locked)</div>
-        <div class="pill lock-pill">🔒 Unlock after 100-day streak</div>
-      </div>
-
-      <button id="back-btn" class="back-btn">← Back to Stats</button>
     </section>
 
   </div>
 
-  <!-- SCRIPT -->
   <script>
     const navButtons = document.querySelectorAll(".nav-btn");
-    const homeScreen = document.getElementById("home-screen");
+    const statsScreen = document.getElementById("stats-screen");
     const missionsScreen = document.getElementById("missions-screen");
-    const backBtn = document.getElementById("back-btn");
+    const backLink = document.getElementById("back-link");
 
-    // NAVIGATION
+    function showScreen(name) {
+      if (name === "stats") {
+        statsScreen.classList.add("active");
+        missionsScreen.classList.remove("active");
+      } else if (name === "missions") {
+        missionsScreen.classList.add("active");
+        statsScreen.classList.remove("active");
+      }
+    }
+
     navButtons.forEach(btn => {
-      btn.onclick = () => {
+      btn.addEventListener("click", () => {
         const screen = btn.dataset.screen;
         if (!screen) return;
-
         navButtons.forEach(b => b.classList.remove("active"));
-        btn.classList.add("active");
-
-        if (screen === "home") {
-          homeScreen.style.display = "block";
-          missionsScreen.classList.remove("active");
-        } else {
-          homeScreen.style.display = "none";
-          missionsScreen.classList.add("active");
-        }
-      };
+        if (!btn.disabled) btn.classList.add("active");
+        showScreen(screen);
+      });
     });
 
-    // BACK BUTTON
-    backBtn.onclick = () => {
-      homeScreen.style.display = "block";
-      missionsScreen.classList.remove("active");
-
+    backLink.addEventListener("click", () => {
+      showScreen("stats");
       navButtons.forEach(b => b.classList.remove("active"));
-      document.querySelector('[data-screen="home"]').classList.add("active");
-    };
-
-    // Show home by default
-    homeScreen.style.display = "block";
+      document.querySelector('[data-screen="stats"]').classList.add("active");
+    });
   </script>
 
 </body>
